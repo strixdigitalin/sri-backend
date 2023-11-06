@@ -14,7 +14,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 const mongodburl = process.env.MONGODBURL
-console.log(mongodburl)
 
 // =============[encrypt password]==================//
 const bcrypt = require('bcrypt');
@@ -78,12 +77,15 @@ app.post('/AdminRegister', async function (req, res) {
         let savedData = await Admin.create(data);
         res.status(201).send({
             status: true,
-            msg: "Admin Register successfull",
+            message: "Admin Register successfull",
             data: savedData
         });
     }
-    catch (err) {
-        res.status(500).send({ status: false, error: err.message });
+    catch (error){
+        return res.status(500).send({
+            status: false,
+            message: error.message,
+        });
     }
 }
 )
@@ -100,7 +102,7 @@ app.post('/AdminLogin', async function (req, res) {
         if (!user) {
             return res.status(400).send({
                 status: false,
-                msg: "Email and Password is Invalid",
+                message: "Email and Password is Invalid",
             });
         }
 
@@ -126,13 +128,13 @@ app.post('/AdminLogin', async function (req, res) {
         user.token = updateToken.token;
         return res.status(200).send({
             status: true,
-            msg: "Seller login successfull",
+            message: "Admin login successfull",
             data: user,
         });
     } catch (error) {
         return res.status(500).send({
             status: false,
-            msg: error.message,
+            message: error.message,
         });
     }
 }
@@ -366,6 +368,148 @@ app.get(
         }
     }
 );
+
+
+
+
+// =========================[Get all Seller Api with Search by admin]============================
+
+app.get('/:userId/Get_all_Seller/',
+    Middleware.jwtValidation,
+    Middleware.authorization,
+    async (req, res) => {
+        try {
+            const id = req.params.id;
+            const searchQuery = req.query.search;
+
+            let query = {}; 
+            if (searchQuery) {
+                query = { Name: { $regex: new RegExp(searchQuery, 'i') } };
+            }
+
+            const All_seller = await Seller_Register.find(query);
+
+            const All_Seller_data = All_seller.map(seller => ({
+                Name: seller.Name,
+                Primary_Email: seller.Primary_Email,
+                Alternative_Email: seller.Alternative_Email,
+                Primary_Number: seller.Primary_Number,
+                Alternative_Number: seller.Alternative_Number,
+                Company_Name: seller.Company_Name,
+                Company_Website: seller.Company_Website,
+                Gstin: seller.Gstin,
+                Pan_Number: seller.Pan_Number,
+                Address : seller.Address,
+                date: seller.date
+            }));
+
+            res.status(200).send({
+                status: true,
+                message: "Get all Sellers Successful",
+                data: All_Seller_data,
+            });
+        } catch (error) {
+            console.log(error.message);
+            res.status(500).json({ message: error.message });
+        }
+    });
+
+
+
+
+// =========================[Get all Buyers Api with Search by admin]============================
+
+app.get('/:userId/Get_all_Buyers/',
+    Middleware.jwtValidation,
+    Middleware.authorization,
+    async (req, res) => {
+        try {
+            const id = req.params.id;
+            const searchQuery = req.query.search;
+
+            let query = {}; 
+            if (searchQuery) {
+                query = { Name: { $regex: new RegExp(searchQuery, 'i') } };
+            }
+
+            const All_seller = await UserModel.find(query);
+
+            const All_Seller_data = All_seller.map(seller => ({
+                Name: seller.Name,
+                Primary_Email: seller.Primary_Email,
+                Alternative_Email: seller.Alternative_Email,
+                Primary_Number: seller.Primary_Number,
+                Alternative_Number: seller.Alternative_Number,
+                Company_Name: seller.Company_Name,
+                Company_Website: seller.Company_Website,
+                Gstin: seller.Gstin,
+                Pan_Number: seller.Pan_Number,
+                Address : seller.Address,
+                date: seller.date
+            }));
+
+            res.status(200).send({
+                status: true,
+                message: "Get all Buyers Successful",
+                data: All_Seller_data,
+            });
+        } catch (error) {
+            console.log(error.message);
+            res.status(500).json({ message: error.message });
+        }
+    });
+
+
+
+
+// =========================[Get All UnApproved Products List for admin]============================
+
+
+app.get('/:userId/Get_All_UnApproved_product_for_admin_Product',
+    Middleware.jwtValidation,
+    Middleware.authorization,
+    async (req, res) => {
+        try {
+            const { search } = req.query;
+            const filter = search ? { IsApproved: false, Product_Name: { $regex: search, $options: 'i' } } : { IsApproved: false };
+            const Products = await Product.find(filter);
+            const productsWithUserData = [];
+
+            for (const product of Products) {
+                const user = await Seller_Register.findById(product.UserId);
+                const category = await Category.findById(product.Product_Category);
+                if (user) {
+                    const productWithUser = {
+                        product: {
+                            ...product._doc,
+                            Product_Category: category.Category_Name,
+                        },
+                        user: {
+                            _id: user._id,
+                            Name: user.Name,
+                            Profile_Image: user.Profile_Image,
+                            Address: user.Address,
+                            Primary_Number: user.Primary_Number,
+                            Alternative_Number: user.Alternative_Number,
+                            Primary_Email: user.Primary_Email,
+                            Alternative_Email: user.Alternative_Email,
+                            Company_Name: user.Company_Name,
+                            Company_Website: user.Company_Website,
+                        },
+                    };
+                    productsWithUserData.push(productWithUser);
+                }
+            }
+            res.status(200).send({
+                status: true,
+                message: 'Unapproved products retrieved successfully',
+                data: productsWithUserData,
+            });
+        } catch (error) {
+            console.log(error.message);
+            res.status(500).json({ message: error.message });
+        }
+    });
 
 
 
