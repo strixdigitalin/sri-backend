@@ -245,7 +245,7 @@ app.get('/:userId/Get_All_Approved_product_for_admin_Product',
 
 // =========================[Approve the Products by admin]============================
 
-app.put('/:userId/Approve_Product/:id/',
+app.get('/:userId/Approve_Product/:id/',
     Middleware.jwtValidation,
     Middleware.authorization,
     async (req, res) => {
