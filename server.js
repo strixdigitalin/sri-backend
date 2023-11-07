@@ -81,7 +81,7 @@ app.post('/AdminRegister', async function (req, res) {
             data: savedData
         });
     }
-    catch (error){
+    catch (error) {
         return res.status(500).send({
             status: false,
             message: error.message,
@@ -325,6 +325,36 @@ app.get(
 );
 
 
+// ===========================[ Delete Category by Id  Api] =========================//
+
+app.get("/Delete_category/:id", async (req, res) => {
+    try {
+        const Id = req.params.id;
+        const delete_category_data = await Category.findOneAndDelete({ _id: Id });
+
+        if (!delete_category_data) {
+            return res.status(404).send({
+                status: false,
+                message: "No Category found with this Id",
+                data: delete_category_data,
+            });
+        }
+
+        res.status(200).send({
+            status: true,
+            message: "Delete Category Successfully",
+            data: delete_category_data,
+        });
+    } catch (error) {
+        res.status(500).send({
+            status: false,
+            error: error.message, 
+        });
+    }
+});
+
+
+
 // ==========================[Create Populaur city Api]========================================
 
 app.post(
@@ -382,7 +412,7 @@ app.get('/:userId/Get_all_Seller/',
             const id = req.params.id;
             const searchQuery = req.query.search;
 
-            let query = {}; 
+            let query = {};
             if (searchQuery) {
                 query = { Name: { $regex: new RegExp(searchQuery, 'i') } };
             }
@@ -399,7 +429,7 @@ app.get('/:userId/Get_all_Seller/',
                 Company_Website: seller.Company_Website,
                 Gstin: seller.Gstin,
                 Pan_Number: seller.Pan_Number,
-                Address : seller.Address,
+                Address: seller.Address,
                 date: seller.date
             }));
 
@@ -427,7 +457,7 @@ app.get('/:userId/Get_all_Buyers/',
             const id = req.params.id;
             const searchQuery = req.query.search;
 
-            let query = {}; 
+            let query = {};
             if (searchQuery) {
                 query = { Name: { $regex: new RegExp(searchQuery, 'i') } };
             }
@@ -444,7 +474,7 @@ app.get('/:userId/Get_all_Buyers/',
                 Company_Website: seller.Company_Website,
                 Gstin: seller.Gstin,
                 Pan_Number: seller.Pan_Number,
-                Address : seller.Address,
+                Address: seller.Address,
                 date: seller.date
             }));
 
@@ -614,7 +644,7 @@ app.post('/Seller_Login', async function (req, res) {
             status: true,
             message: "Seller login successfull",
             data: user,
-            User : "Seller"
+            User: "Seller"
         });
     } catch (error) {
         return res.status(500).send({
@@ -674,11 +704,11 @@ app.get("/:userId/GetSellerProfile",
                 Primary_Number: Seller.Primary_Number,
                 Alternative_Number: Seller.Alternative_Number,
                 Address: Seller.Address,
-                Company_Name:Seller.Company_Name,
-                Company_Website:Seller.Company_Website,
-                Gstin:Seller.Gstin,
-                Pan_Number:Seller.Pan_Number,
-                date:Seller.date
+                Company_Name: Seller.Company_Name,
+                Company_Website: Seller.Company_Website,
+                Gstin: Seller.Gstin,
+                Pan_Number: Seller.Pan_Number,
+                date: Seller.date
             }
             if (Seller) {
                 res.status(200).send({
@@ -976,7 +1006,7 @@ app.post('/User_Login', async function (req, res) {
             status: true,
             message: "User login successful",
             data: user,
-            User : "User"
+            User: "User"
         });
     } catch (error) {
         return res.status(500).send({
@@ -1037,7 +1067,7 @@ app.get("/:userId/GetUserProfile",
                 Primary_Number: User.Primary_Number,
                 Alternative_Number: User.Alternative_Number,
                 Address: User.Address,
-                date:User.date
+                date: User.date
             }
             if (User) {
                 res.status(200).send({
@@ -1090,7 +1120,7 @@ app.get('/Get_Approved_Product_for_all_user', async (req, res) => {
                         Alternative_Email: user.Alternative_Email,
                         Company_Name: user.Company_Name,
                         Company_Website: user.Company_Website,
-                        date:user.date,
+                        date: user.date,
                     },
                 };
                 productsWithUserData.push(productWithUser);

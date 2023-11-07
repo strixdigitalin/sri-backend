@@ -4,6 +4,7 @@ const CategorySchema = new mongoose.Schema(
     {
         Category_Name :{type :String,required :[true,"Please Enter Category Name"]},
         Category_Image:{ type: String, require: true},
+        Description:{type:String,require:true},
         date :{type:Date,default:Date.now},
     }
 );
