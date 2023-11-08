@@ -21,6 +21,7 @@ const Admin = require('./models/AdminModel');
 const Category = require('./models/CategoryModel');
 const CityModel = require('./models/CityModel');
 const ProductQuery = require('./models/ProductQuerymodel');
+const Blogs = require('./models/BlogModel');
 
 app.use(express.json())
 
@@ -348,7 +349,7 @@ app.get("/Delete_category/:id", async (req, res) => {
     } catch (error) {
         res.status(500).send({
             status: false,
-            error: error.message, 
+            error: error.message,
         });
     }
 });
@@ -542,6 +543,53 @@ app.get('/:userId/Get_All_UnApproved_product_for_admin_Product',
     });
 
 
+
+// ================================[Create Blog Api] =====================//
+
+app.post('/:userId/Create_blog',
+    Middleware.jwtValidation,
+    Middleware.authorization,
+    async (req, res) => {
+        try {
+            const user_id = req.params.userId
+            const data = req.body
+
+            data.User_id = user_id
+            const Created_blog = await Blogs.create(data)
+            return res.status(201).send({
+                status: true,
+                message: "Blog Created Successfully",
+                data: Created_blog,
+            });
+        } catch (error) {
+            return res.status(500).send({
+                status: false,
+                message: error.message,
+            });
+        }
+    })
+
+
+// ================================[Get All Blogs Api] =====================//
+
+
+app.get('/Get_All_Blogs',
+    async (req, res) => {
+        try {
+            const All_blogs = await Blogs.find()
+            return res.status(200).send({
+                status: true,
+                message: "Get All blog Successfull",
+                data: All_blogs,
+            });
+
+        } catch (error) {
+            return res.status(500).send({
+                status: false,
+                message: error.message,
+            });
+        }
+    })
 
 
 
