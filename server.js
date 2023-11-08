@@ -601,7 +601,7 @@ app.get('/Delete_Blogs/:id',
             const All_blogs = await Blogs.findOneAndDelete({ _id: Id })
             return res.status(200).send({
                 status: true,
-                message: "Get All blog Successfull",
+                message: "delete blog Successfull",
                 data: All_blogs,
             });
 
