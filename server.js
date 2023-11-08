@@ -592,6 +592,28 @@ app.get('/Get_All_Blogs',
     })
 
 
+//================================[delete blog Api] ============================
+
+app.get('/Delete_Blogs/:id',
+    async (req, res) => {
+        try {
+            const Id = req.params.id
+            const All_blogs = await Blogs.findOneAndDelete({ _id: Id })
+            return res.status(200).send({
+                status: true,
+                message: "Get All blog Successfull",
+                data: All_blogs,
+            });
+
+        } catch (error) {
+            return res.status(500).send({
+                status: false,
+                message: error.message,
+            });
+        }
+    })
+
+
 
 //===============================[Seller Apis]====================================//
 
