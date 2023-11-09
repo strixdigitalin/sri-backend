@@ -1379,7 +1379,7 @@ app.post("/:userId/CreateEnquire",
             res.status(201).send({
                 status: true,
                 Message: 'Enquire is Created Successfull',
-                Productquery: productquery
+                data: productquery
             })
         } catch (error) {
             res.status(500).send({
