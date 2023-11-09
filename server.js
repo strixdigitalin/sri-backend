@@ -22,6 +22,7 @@ const Category = require('./models/CategoryModel');
 const CityModel = require('./models/CityModel');
 const ProductQuery = require('./models/ProductQuerymodel');
 const Blogs = require('./models/BlogModel');
+const Enquire = require('./models/EnquireModel');
 
 app.use(express.json())
 
@@ -663,7 +664,7 @@ app.get("/:userId/GetProductQuery",
         try {
             const { search } = req.query;
             const queryFilter = search ? { Product_Name: { $regex: search, $options: 'i' } } : {};
-            
+
             const productquery = await ProductQuery.find(queryFilter);
             const ProductNewQuery = [];
 
@@ -1351,11 +1352,42 @@ app.post("/:userId/ProductQuery",
                 Productquery: productquery
             })
         } catch (error) {
-            res.status(500).send({ status: false, error: error.message });
+            res.status(500).send({
+                status: false,
+                error: error.message
+            });
         }
     })
 
 
+
+
+
+//=============================[Create Enquire Product ]=========================
+
+
+app.post("/:userId/CreateEnquire",
+    Middleware.jwtValidation,
+    Middleware.authorization,
+    async (req, res) => {
+        try {
+            const Userid = req.params.userId
+            const data = req.body
+            data.UserId = Userid
+
+            const productquery = await Enquire.create(data)
+            res.status(201).send({
+                status: true,
+                Message: 'Enquire is Created Successfull',
+                Productquery: productquery
+            })
+        } catch (error) {
+            res.status(500).send({
+                status: false,
+                error: error.message
+            });
+        }
+    })
 
 
 
