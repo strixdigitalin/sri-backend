@@ -693,6 +693,42 @@ app.get("/:userId/GetProductQuery",
 
 
 
+//=================================[get Enquire ]===============================//
+
+
+app.get("/:userId/GetEnquire",
+    Middleware.jwtValidation,
+    Middleware.authorization,
+    async (req, res) => {
+        try {
+            const GetAllEnquire = await Enquire.find();
+
+            const userIds = GetAllEnquire.map(enquire => enquire.UserId);
+            const productIds = GetAllEnquire.map(enquire => enquire.ProductId);
+
+            const users = await UserModel.find({ _id: { $in: userIds } });
+            const userMap = new Map(users.map(user => [user._id.toString(), { UserName: user.Name, Primary_Email: user.Primary_Email }]));
+
+            const products = await Product.find({ _id: { $in: productIds } });
+            const productMap = new Map(products.map(product => [product._id.toString(), { Product_Name: product.Product_Name }]));
+
+            const enrichedEnquireData = GetAllEnquire.map(enquire => ({
+                ...enquire._doc,
+                User: userMap.get(enquire.UserId),
+                Product: productMap.get(enquire.ProductId),
+            }));
+
+            res.status(200).send({
+                status: true,
+                Message: 'Get Enqire  Successfull',
+                data: enrichedEnquireData,
+            });
+        } catch (error) {
+            res.status(500).send({ status: false, error: error.message });
+        }
+    });
+
+
 
 //===============================[Seller Apis]====================================//
 
@@ -1057,6 +1093,7 @@ app.delete('/:userId/Delete_Product/:id/',
 
 
 
+
 // ================================[User Apis]===============================//
 
 
@@ -1385,7 +1422,7 @@ app.post("/:userId/CreateEnquire",
             res.status(500).send({
                 status: false,
                 error: error.message,
-                message:error.message
+                message: error.message
             });
         }
     })
