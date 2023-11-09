@@ -254,7 +254,6 @@ app.get('/:userId/Approve_Product/:id/',
             const userId = req.params.userId;
             const id = req.params.id;
 
-            // Find the product by ID and the user ID
             const product = await Product.findOne({ _id: id });
 
             if (!product) {
@@ -265,13 +264,13 @@ app.get('/:userId/Approve_Product/:id/',
                 });
             }
 
-            product.IsApproved = !product.IsApproved;
+            product.IsApproved = true;
 
             await product.save();
 
             res.status(200).send({
                 status: true,
-                message: `Product Approval status changed to ${product.IsApproved}`,
+                message: `Product Approved Successfull`,
                 data: product,
             });
         } catch (error) {
@@ -279,6 +278,45 @@ app.get('/:userId/Approve_Product/:id/',
             res.status(500).json({ message: error.message });
         }
     });
+
+
+
+// =========================[UnApprove the Products by admin]============================
+
+app.get('/:userId/UnApprove_Product/:id/',
+    Middleware.jwtValidation,
+    Middleware.authorization,
+    async (req, res) => {
+        try {
+            const userId = req.params.userId;
+            const id = req.params.id;
+
+            const product = await Product.findOne({ _id: id });
+
+            if (!product) {
+                return res.status(404).send({
+                    status: false,
+                    message: "Product not found",
+                    data: null,
+                });
+            }
+
+            product.IsApproved = false;
+
+            await product.save();
+
+            res.status(200).send({
+                status: true,
+                message: `Product UnApproval Successfull`,
+                data: product,
+            });
+        } catch (error) {
+            console.log(error.message);
+            res.status(500).json({ message: error.message });
+        }
+    });
+
+
 
 // ===========================[Create Category Api] =========================//
 
