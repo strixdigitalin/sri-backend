@@ -615,6 +615,46 @@ app.get('/Delete_Blogs/:id',
 
 
 
+
+//==============================[get User productQuery in Admin]==================
+
+app.get("/:userId/GetProductQuery",
+    Middleware.jwtValidation,
+    Middleware.authorization,
+    async (req, res) => {
+        try {
+            const { search } = req.query;
+            const queryFilter = search ? { Product_Name: { $regex: search, $options: 'i' } } : {};
+            
+            const productquery = await ProductQuery.find(queryFilter);
+            const ProductNewQuery = [];
+
+            for (const product of productquery) {
+                const userdata = await UserModel.findById(product.UserId);
+                if (userdata) {
+                    const Products = {
+                        ...product._doc,
+                        _id: userdata._id,
+                        Name: userdata.Name,
+                        Primary_Email: userdata.Primary_Email,
+                    };
+                    ProductNewQuery.push(Products);
+                }
+            }
+
+            res.status(200).send({
+                status: true,
+                Message: 'Get Product Query Successful',
+                data: ProductNewQuery
+            });
+        } catch (error) {
+            res.status(500).send({ status: false, error: error.message });
+        }
+    });
+
+
+
+
 //===============================[Seller Apis]====================================//
 
 // =============[Seller Register api]==================//
@@ -1278,37 +1318,6 @@ app.post("/:userId/ProductQuery",
     })
 
 
-
-//==============================[get User productQuery in Admin]==================
-
-app.get("/:userId/GetProductQuery",
-    Middleware.jwtValidation,
-    Middleware.authorization,
-    async (req, res) => {
-        try {
-            const productquery = await ProductQuery.find()
-            const ProductNewQuery = []
-            for (const product of productquery) {
-                const userdata = await UserModel.findById(product.UserId)
-                if (userdata) {
-                    const Products = {
-                        ...product._doc,
-                        _id: userdata._id,
-                        Name: userdata.Name,
-                        Primary_Email: userdata.Primary_Email,
-                    };
-                    ProductNewQuery.push(Products);
-                }
-            }
-            res.status(200).send({
-                status: true,
-                Message: 'Get Product Query Successful',
-                data: ProductNewQuery
-            })
-        } catch (error) {
-            res.status(500).send({ status: false, error: error.message });
-        }
-    })
 
 
 
