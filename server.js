@@ -1303,7 +1303,7 @@ app.get("/:userId/GetProductQuery",
             res.status(200).send({
                 status: true,
                 Message: 'Get Product Query Successful',
-                Productquery: ProductNewQuery
+                data: ProductNewQuery
             })
         } catch (error) {
             res.status(500).send({ status: false, error: error.message });
