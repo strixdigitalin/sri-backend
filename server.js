@@ -1378,13 +1378,14 @@ app.post("/:userId/CreateEnquire",
             const productquery = await Enquire.create(data)
             res.status(201).send({
                 status: true,
-                Message: 'Enquire is Created Successfull',
+                message: 'Enquire is Created Successfull',
                 data: productquery
             })
         } catch (error) {
             res.status(500).send({
                 status: false,
-                error: error.message
+                error: error.message,
+                message:error.message
             });
         }
     })
