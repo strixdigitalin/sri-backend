@@ -506,6 +506,7 @@ app.get('/:userId/Get_all_Buyers/',
             const All_seller = await UserModel.find(query);
 
             const All_Seller_data = All_seller.map(seller => ({
+                id :seller._id,
                 Name: seller.Name,
                 Primary_Email: seller.Primary_Email,
                 Alternative_Email: seller.Alternative_Email,
@@ -729,6 +730,86 @@ app.get("/:userId/GetEnquire",
         }
     });
 
+
+// ===========================[update Seller for Admin Api]=======================
+
+
+app.put('/:userId/Update_Seller/:id/',
+    Middleware.jwtValidation,
+    Middleware.authorization,
+    async (req, res) => {
+        try {
+            const userId = req.params.userId;
+            const id = req.params.id;
+            const updatedData = req.body;
+            const Seller = await Seller_Register.findOneAndUpdate({ _id: id }, updatedData, { new: true });
+
+            if (Seller) {
+                res.status(200).send({
+                    status: true,
+                    message: "Seller Update Successfully",
+                    data: Seller,
+                });
+            } else {
+                res.status(404).send({
+                    status: false,
+                    message: "Seller not found",
+                    data: null,
+                });
+            }
+        } catch (error) {
+            console.log(error.message);
+            res.status(500).send({
+                status: false,
+                message: error,
+                data: null,
+            });
+        }
+    });
+
+
+
+
+
+// ===========================[update buyer for Admin Api]=======================
+
+
+app.put('/:userId/Update_Buyer/:id/',
+    Middleware.jwtValidation,
+    Middleware.authorization,
+    async (req, res) => {
+        try {
+            const userId = req.params.userId;
+            const id = req.params.id;
+            const updatedData = req.body;
+            const User = await UserModel.findOneAndUpdate({ _id: id }, updatedData, { new: true });
+
+            if (User) {
+                res.status(200).send({
+                    status: true,
+                    message: "User Update Successfully",
+                    data: User,
+                });
+            } else {
+                res.status(404).send({
+                    status: false,
+                    message: "Seller not found",
+                    data: null,
+                });
+            }
+        } catch (error) {
+            console.log(error.message);
+            res.status(500).send({
+                status: false,
+                message: error,
+                data: null,
+            });
+        }
+    });
+
+
+
+ 
 
 
 //===============================[Seller Apis]====================================//
