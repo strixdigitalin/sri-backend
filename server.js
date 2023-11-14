@@ -1680,7 +1680,7 @@ app.get('/Get_All_Approved_product_for_User',
     async (req, res) => {
         try {
             const { search } = req.query;
-            const filter = search ? { IsApproved: false, Product_Name: { $regex: search, $options: 'i' } } : { IsApproved: true };
+            const filter = search ? { IsApproved: true, Product_Name: { $regex: search, $options: 'i' } } : { IsApproved: true };
             const Products = await Product.find(filter);
             const productsWithUserData = [];
 
@@ -1719,6 +1719,12 @@ app.get('/Get_All_Approved_product_for_User',
             res.status(500).json({ message: error.message });
         }
     });
+
+
+
+
+//=================================[Database code  ]==============================//
+
 
 
 
