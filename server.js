@@ -460,6 +460,7 @@ app.get('/:userId/Get_all_Seller/',
             const All_seller = await Seller_Register.find(query);
 
             const All_Seller_data = All_seller.map(seller => ({
+                id:seller._id,
                 Name: seller.Name,
                 Primary_Email: seller.Primary_Email,
                 Alternative_Email: seller.Alternative_Email,
