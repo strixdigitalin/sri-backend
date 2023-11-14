@@ -793,7 +793,7 @@ app.put('/:userId/Update_Buyer/:id/',
             } else {
                 res.status(404).send({
                     status: false,
-                    message: "Seller not found",
+                    message: "User not found",
                     data: null,
                 });
             }
