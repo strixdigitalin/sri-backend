@@ -460,7 +460,7 @@ app.get('/:userId/Get_all_Seller/',
             const All_seller = await Seller_Register.find(query);
 
             const All_Seller_data = All_seller.map(seller => ({
-                id:seller._id,
+                id: seller._id,
                 Name: seller.Name,
                 Primary_Email: seller.Primary_Email,
                 Alternative_Email: seller.Alternative_Email,
@@ -506,7 +506,7 @@ app.get('/:userId/Get_all_Buyers/',
             const All_seller = await UserModel.find(query);
 
             const All_Seller_data = All_seller.map(seller => ({
-                id :seller._id,
+                id: seller._id,
                 Name: seller.Name,
                 Primary_Email: seller.Primary_Email,
                 Alternative_Email: seller.Alternative_Email,
@@ -809,7 +809,56 @@ app.put('/:userId/Update_Buyer/:id/',
 
 
 
- 
+//==============================[dashboard Statistical api  ] ===========================//
+
+
+
+app.get('/:userId/Statistical_Analysis',
+    Middleware.jwtValidation,
+    Middleware.authorization,
+    async (req, res) => {
+        try {
+            const Seller = await Seller_Register.find();
+            const buyer = await UserModel.find();
+            const products = await Product.find();
+            const Approved_product = await Product.find({ IsApproved: true });
+            const UnApproved_product = await Product.find({ IsApproved: false });
+
+            const Total_seller = Seller.length;
+            const Total_buyer = buyer.length;
+            const Total_product = products.length;
+            const Total_Approved_product = Approved_product.length;
+            const Total_UnApproved_product = UnApproved_product.length;
+
+            let data = {
+                "Total_seller":Total_seller,
+                "Total_buyer":Total_buyer,
+                "Total_product":Total_product,
+                "Total_Approved_product":Total_Approved_product,
+                "Total_UnApproved_product":Total_UnApproved_product,
+            }
+
+
+            res.status(200).send({
+                status: true,
+                message: "Statistical_Analysis get Successfully",
+                data: data,
+            });
+
+
+        } catch (error) {
+            res.status(500).send({
+                status: false,
+                message: error,
+                data: null,
+            });
+        }
+
+
+    }
+)
+
+
 
 
 //===============================[Seller Apis]====================================//
@@ -1256,7 +1305,7 @@ app.get("/:userId/GetEnquireforseller",
     async (req, res) => {
         try {
             const user_id = req.params.userId;
-            
+
             const GetAllEnquire = await Enquire.find();
 
             const userIds = GetAllEnquire.map(enquire => enquire.UserId);
@@ -1266,7 +1315,7 @@ app.get("/:userId/GetEnquireforseller",
             const userMap = new Map(users.map(user => [user._id.toString(), { UserName: user.Name, Primary_Email: user.Primary_Email }]));
 
             const products = await Product.find({ _id: { $in: productIds } });
-            const productMap = new Map(products.map(product => [product._id.toString(), { Product_Name: product.Product_Name,ProductUserId:product.UserId }]));
+            const productMap = new Map(products.map(product => [product._id.toString(), { Product_Name: product.Product_Name, ProductUserId: product.UserId }]));
 
             const enrichedEnquireData = GetAllEnquire.map(enquire => ({
                 ...enquire._doc,
