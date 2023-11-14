@@ -1676,58 +1676,59 @@ app.post("/:userId/CreateEnquire",
 
 //===================================[get all product search query api for user]========================
 
-app.get('/Get_All_Approved_product_for_User',
-    async (req, res) => {
-        try {
-            const { search } = req.query;
-            const filter = search ? { IsApproved: true, Product_Name: { $regex: search, $options: 'i' } } : { IsApproved: true };
-            const Products = await Product.find(filter);
-            const productsWithUserData = [];
+app.get('/Get_All_Approved_product_for_User', async (req, res) => {
+    try {
+        const { search } = req.query;
 
-            
-            if (!search) {
-                return res.status(200).send({
-                    status: true,
-                    message: 'No products found',
-                    data: [],
-                });
-            }
-
-            for (const product of Products) {
-                const user = await Seller_Register.findById(product.UserId);
-                const category = await Category.findById(product.Product_Category);
-                if (user) {
-                    const productWithUser = {
-                        product: {
-                            ...product._doc,
-                            Product_Category: category.Category_Name,
-                        },
-                        user: {
-                            _id: user._id,
-                            Name: user.Name,
-                            Profile_Image: user.Profile_Image,
-                            Address: user.Address,
-                            Primary_Number: user.Primary_Number,
-                            Alternative_Number: user.Alternative_Number,
-                            Primary_Email: user.Primary_Email,
-                            Alternative_Email: user.Alternative_Email,
-                            Company_Name: user.Company_Name,
-                            Company_Website: user.Company_Website,
-                        },
-                    };
-                    productsWithUserData.push(productWithUser);
-                }
-            }
-            res.status(200).send({
+        // Check for an empty search term
+        if (!search) {
+            return res.status(200).send({
                 status: true,
-                message: 'approved products retrieved successfully',
-                data: productsWithUserData,
+                message: 'No products found',
+                data: [],
             });
-        } catch (error) {
-            console.log(error.message);
-            res.status(500).json({ message: error.message });
         }
-    });
+
+        const filter = { IsApproved: true, Product_Name: { $regex: search, $options: 'i' } };
+        const Products = await Product.find(filter);
+        const productsWithUserData = [];
+
+        for (const product of Products) {
+            const user = await Seller_Register.findById(product.UserId);
+            const category = await Category.findById(product.Product_Category);
+            if (user) {
+                const productWithUser = {
+                    product: {
+                        ...product._doc,
+                        Product_Category: category.Category_Name,
+                    },
+                    user: {
+                        _id: user._id,
+                        Name: user.Name,
+                        Profile_Image: user.Profile_Image,
+                        Address: user.Address,
+                        Primary_Number: user.Primary_Number,
+                        Alternative_Number: user.Alternative_Number,
+                        Primary_Email: user.Primary_Email,
+                        Alternative_Email: user.Alternative_Email,
+                        Company_Name: user.Company_Name,
+                        Company_Website: user.Company_Website,
+                    },
+                };
+                productsWithUserData.push(productWithUser);
+            }
+        }
+
+        res.status(200).send({
+            status: true,
+            message: 'approved products retrieved successfully',
+            data: productsWithUserData,
+        });
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ message: error.message });
+    }
+});
 
 
 
