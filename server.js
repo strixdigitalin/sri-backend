@@ -1028,7 +1028,7 @@ app.put('/:userId/Update_Product/:id/',
             const userId = req.params.userId;
             const id = req.params.id;
             const updatedData = req.body;
-            const Products = await Product.findOneAndUpdate({ _id: id, UserId: userId }, updatedData, { new: true });
+            const Products = await Product.findOneAndUpdate({ _id: id }, updatedData, { new: true });
 
             if (Products) {
                 res.status(200).send({
