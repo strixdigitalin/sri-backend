@@ -1684,6 +1684,15 @@ app.get('/Get_All_Approved_product_for_User',
             const Products = await Product.find(filter);
             const productsWithUserData = [];
 
+            
+            if (!search) {
+                return res.status(200).send({
+                    status: true,
+                    message: 'No products found',
+                    data: [],
+                });
+            }
+
             for (const product of Products) {
                 const user = await Seller_Register.findById(product.UserId);
                 const category = await Category.findById(product.Product_Category);
@@ -1711,7 +1720,7 @@ app.get('/Get_All_Approved_product_for_User',
             }
             res.status(200).send({
                 status: true,
-                message: 'Unapproved products retrieved successfully',
+                message: 'approved products retrieved successfully',
                 data: productsWithUserData,
             });
         } catch (error) {
