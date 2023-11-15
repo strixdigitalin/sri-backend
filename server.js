@@ -709,7 +709,7 @@ app.get("/:userId/GetEnquire",
             const productIds = GetAllEnquire.map(enquire => enquire.ProductId);
 
             const users = await UserModel.find({ _id: { $in: userIds } });
-            const userMap = new Map(users.map(user => [user._id.toString(), { UserName: user.Name, Primary_Email: user.Primary_Email }]));
+            const userMap = new Map(users.map(user => [user._id.toString(), { UserName: user.Name, Primary_Email: user.Primary_Email,Primary_Number:user.Primary_Number }]));
 
             const products = await Product.find({ _id: { $in: productIds } });
             const productMap = new Map(products.map(product => [product._id.toString(), { Product_Name: product.Product_Name }]));
