@@ -678,6 +678,7 @@ app.get("/:userId/GetProductQuery",
                         _id: userdata._id,
                         Name: userdata.Name,
                         Primary_Email: userdata.Primary_Email,
+                        Primary_Number:userdata.Primary_Number
                     };
                     ProductNewQuery.push(Products);
                 }
