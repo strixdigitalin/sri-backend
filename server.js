@@ -698,6 +698,37 @@ app.get("/:userId/GetProductQuery",
 //=================================[get Enquire ]===============================//
 
 
+// app.get("/:userId/GetEnquire",
+//     Middleware.jwtValidation,
+//     Middleware.authorization,
+//     async (req, res) => {
+//         try {
+//             const GetAllEnquire = await Enquire.find();
+
+//             const userIds = GetAllEnquire.map(enquire => enquire.UserId);
+//             const productIds = GetAllEnquire.map(enquire => enquire.ProductId);
+
+//             const users = await UserModel.find({ _id: { $in: userIds } });
+//             const userMap = new Map(users.map(user => [user._id.toString(), { UserName: user.Name, Primary_Email: user.Primary_Email,Primary_Number:user.Primary_Number }]));
+
+//             const products = await Product.find({ _id: { $in: productIds } });
+//             const productMap = new Map(products.map(product => [product._id.toString(), { Product_Name: product.Product_Name }]));
+
+//             const enrichedEnquireData = GetAllEnquire.map(enquire => ({
+//                 ...enquire._doc,
+//                 User: userMap.get(enquire.UserId),
+//                 Product: productMap.get(enquire.ProductId),
+//             }));
+
+//             res.status(200).send({
+//                 status: true,
+//                 Message: 'Get Enqire  Successfull',
+//                 data: enrichedEnquireData,
+//             });
+//         } catch (error) {
+//             res.status(500).send({ status: false, error: error.message });
+//         }
+//     });
 app.get("/:userId/GetEnquire",
     Middleware.jwtValidation,
     Middleware.authorization,
@@ -709,10 +740,10 @@ app.get("/:userId/GetEnquire",
             const productIds = GetAllEnquire.map(enquire => enquire.ProductId);
 
             const users = await UserModel.find({ _id: { $in: userIds } });
-            const userMap = new Map(users.map(user => [user._id.toString(), { UserName: user.Name, Primary_Email: user.Primary_Email,Primary_Number:user.Primary_Number }]));
+            const userMap = new Map(users.map(user => [user._id.toString(), { UserName: user.Name, Primary_Email: user.Primary_Email, Primary_Number: user.Primary_Number }]));
 
             const products = await Product.find({ _id: { $in: productIds } });
-            const productMap = new Map(products.map(product => [product._id.toString(), { Product_Name: product.Product_Name }]));
+            const productMap = new Map(products.map(product => [product._id.toString(), { Product_Name: product.Product_Name, Seller_Id: product.UserId }]));
 
             const enrichedEnquireData = GetAllEnquire.map(enquire => ({
                 ...enquire._doc,
@@ -720,15 +751,25 @@ app.get("/:userId/GetEnquire",
                 Product: productMap.get(enquire.ProductId),
             }));
 
+            const sellerIds = products.map(product => product.UserId);
+            const sellers = await Seller_Register.find({ _id: { $in: sellerIds } });
+            const sellerMap = new Map(sellers.map(seller => [seller._id.toString(), { Seller_Name: seller.Name, Seller_Primary_Number: seller.Primary_Number }]));
+
+            enrichedEnquireData.forEach(enquire => {
+                const sellerInfo = sellerMap.get(enquire.Product.Seller_Id);
+                enquire.Product.SellerInfo = sellerInfo;
+            });
+
             res.status(200).send({
                 status: true,
-                Message: 'Get Enqire  Successfull',
+                Message: 'Get Enquire Successfull',
                 data: enrichedEnquireData,
             });
         } catch (error) {
             res.status(500).send({ status: false, error: error.message });
         }
     });
+
 
 
 // ===========================[update Seller for Admin Api]=======================
