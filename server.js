@@ -1822,7 +1822,7 @@ app.get("/:userId/Get_Product_check",
     Middleware.authorization,
     async (req, res) => {
         try {
-            const productCheckList = await Product_check.find({ UserId: req.params.userId });
+            const productCheckList = await Product_check.find();
 
             const result = await Promise.all(productCheckList.map(async (productCheck) => {
                 const user = await UserModel.findOne({ _id: productCheck.UserId });
