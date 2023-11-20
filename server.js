@@ -688,7 +688,7 @@ app.get("/:userId/GetProductQuery",
                         _id: userdata._id,
                         Name: userdata.Name,
                         Primary_Email: userdata.Primary_Email,
-                        Primary_Number:userdata.Primary_Number
+                        Primary_Number: userdata.Primary_Number
                     };
                     ProductNewQuery.push(Products);
                 }
@@ -1364,7 +1364,7 @@ app.get("/:userId/GetEnquireforseller",
             const productIds = GetAllEnquire.map(enquire => enquire.ProductId);
 
             const users = await UserModel.find({ _id: { $in: userIds } });
-            const userMap = new Map(users.map(user => [user._id.toString(), { UserName: user.Name, Primary_Email: user.Primary_Email,Primary_Number:user.Primary_Number }]));
+            const userMap = new Map(users.map(user => [user._id.toString(), { UserName: user.Name, Primary_Email: user.Primary_Email, Primary_Number: user.Primary_Number }]));
 
             const products = await Product.find({ _id: { $in: productIds } });
             const productMap = new Map(products.map(product => [product._id.toString(), { Product_Name: product.Product_Name, ProductUserId: product.UserId }]));
@@ -1803,6 +1803,46 @@ app.post("/:userId/Product_check",
                 message: 'productcheck is Created Successfull',
                 data: productcheck
             })
+        } catch (error) {
+            res.status(500).send({
+                status: false,
+                error: error.message,
+                message: error.message
+            });
+        }
+    })
+
+
+
+//=============================[get all Product_check api ]=========================
+
+
+app.get("/:userId/Get_Product_check",
+    Middleware.jwtValidation,
+    Middleware.authorization,
+    async (req, res) => {
+        try {
+            const productCheckList = await Product_check.find({ UserId: req.params.userId });
+
+            const result = await Promise.all(productCheckList.map(async (productCheck) => {
+                // Fetch user information
+                const user = await UserModel.findOne({ _id: productCheck.UserId });
+
+                // Fetch product information
+                const product = await Product.findOne({ _id: productCheck.ProductId });
+
+                return {
+                    ...productCheck.toObject(),
+                    user,
+                    product
+                };
+            }));
+
+            res.status(201).send({
+                status: true,
+                message: 'productcheck Get Successfull',
+                data: result
+            });
         } catch (error) {
             res.status(500).send({
                 status: false,
