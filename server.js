@@ -23,6 +23,7 @@ const CityModel = require('./models/CityModel');
 const ProductQuery = require('./models/ProductQuerymodel');
 const Blogs = require('./models/BlogModel');
 const Enquire = require('./models/EnquireModel');
+const Product_check = require('./models/Product_checked');
 
 app.use(express.json())
 
@@ -1780,6 +1781,39 @@ app.get('/Get_All_Approved_product_for_User', async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 });
+
+
+
+
+//=============================[Create Product_check api ]=========================
+
+
+app.post("/:userId/Product_check",
+    Middleware.jwtValidation,
+    Middleware.authorization,
+    async (req, res) => {
+        try {
+            const Userid = req.params.userId
+            const data = req.body
+            data.UserId = Userid
+
+            const productcheck = await Product_check.create(data)
+            res.status(201).send({
+                status: true,
+                message: 'productcheck is Created Successfull',
+                data: productcheck
+            })
+        } catch (error) {
+            res.status(500).send({
+                status: false,
+                error: error.message,
+                message: error.message
+            });
+        }
+    })
+
+
+
 
 
 
