@@ -1825,10 +1825,8 @@ app.get("/:userId/Get_Product_check",
             const productCheckList = await Product_check.find({ UserId: req.params.userId });
 
             const result = await Promise.all(productCheckList.map(async (productCheck) => {
-                // Fetch user information
                 const user = await UserModel.findOne({ _id: productCheck.UserId });
 
-                // Fetch product information
                 const product = await Product.findOne({ _id: productCheck.ProductId });
 
                 return {
