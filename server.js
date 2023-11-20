@@ -65,8 +65,8 @@ app.post('/AdminRegister', async function (req, res) {
         if (await Admin.findOne({ Primary_Email: Primary_Email }))
             return res.status(400).send({ message: "Email already exist" });
 
-        const encryptedPassword = bcrypt.hashSync(password, 12);
-        req.body["password"] = encryptedPassword;
+        // const encryptedPassword = bcrypt.hashSync(password, 12);
+        // req.body["password"] = encryptedPassword;
 
         var token = jwt.sign(
             {
@@ -108,13 +108,20 @@ app.post('/AdminLogin', async function (req, res) {
             });
         }
 
-        let compared = await bcrypt.compare(password, user.password);
-        if (!compared) {
+        // let compared = await bcrypt.compare(password, user.password);
+        // if (!compared) {
+        //     return res.status(400).send({
+        //         status: false,
+        //         message: "Your password is invalid",
+        //     });
+        // }
+        if (password !== user.password) {
             return res.status(400).send({
                 status: false,
                 message: "Your password is invalid",
             });
         }
+
         var token = jwt.sign(
             {
                 userId: user._id,
@@ -463,6 +470,7 @@ app.get('/:userId/Get_all_Seller/',
                 id: seller._id,
                 Name: seller.Name,
                 Primary_Email: seller.Primary_Email,
+                password: seller.password,
                 Alternative_Email: seller.Alternative_Email,
                 Primary_Number: seller.Primary_Number,
                 Alternative_Number: seller.Alternative_Number,
@@ -510,6 +518,7 @@ app.get('/:userId/Get_all_Buyers/',
                 Name: seller.Name,
                 Primary_Email: seller.Primary_Email,
                 Alternative_Email: seller.Alternative_Email,
+                password: seller.password,
                 Primary_Number: seller.Primary_Number,
                 Alternative_Number: seller.Alternative_Number,
                 Company_Name: seller.Company_Name,
@@ -939,8 +948,8 @@ app.post('/Seller_Register', async function (req, res) {
         if (await Seller_Register.findOne({ Primary_Email: Primary_Email }))
             return res.status(400).send({ message: "Email already exist" });
 
-        const encryptedPassword = bcrypt.hashSync(password, 12);
-        req.body["password"] = encryptedPassword;
+        // const encryptedPassword = bcrypt.hashSync(password, 12);
+        // req.body["password"] = encryptedPassword;
 
         var token = jwt.sign(
             {
@@ -978,13 +987,13 @@ app.post('/Seller_Login', async function (req, res) {
             });
         }
 
-        let compared = await bcrypt.compare(password, user.password);
-        if (!compared) {
+        if (password !== user.password) {
             return res.status(400).send({
                 status: false,
                 message: "Your password is invalid",
             });
         }
+
         var token = jwt.sign(
             {
                 userId: user._id,
@@ -1414,8 +1423,8 @@ app.post('/User_Register', async function (req, res) {
                     message: "Email already exists"
                 });
             } else {
-                const encryptedPassword = bcrypt.hashSync(password, 12);
-                data.password = encryptedPassword;
+                // const encryptedPassword = bcrypt.hashSync(password, 12);
+                // data.password = encryptedPassword;
 
                 var token = jwt.sign(
                     {
@@ -1455,13 +1464,13 @@ app.post('/User_Login', async function (req, res) {
             });
         }
 
-        let compared = await bcrypt.compare(password, user.password);
-        if (!compared) {
+        if (password !== user.password) {
             return res.status(400).send({
                 status: false,
                 message: "Your password is invalid",
             });
         }
+
         var token = jwt.sign(
             {
                 userId: user._id,
