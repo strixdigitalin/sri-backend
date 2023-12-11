@@ -125,7 +125,7 @@ app.post('/AdminLogin', async function (req, res) {
         if (!user.active){
             return res.status(400).send({
                 status: false,
-                message: "User is Inactive ",
+                message: "This Admin is Inactive for now",
             });
         }
 
