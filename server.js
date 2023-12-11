@@ -150,7 +150,7 @@ app.post('/AdminLogin', async function (req, res) {
 }
 );
 
-// =========================[ All Products List for admin]============================
+// =========================[ All Admin List for admin]============================
 
 
 app.get('/:userId/Get_All_Admin',
@@ -172,6 +172,42 @@ app.get('/:userId/Get_All_Admin',
             });
         }
     })
+
+
+// =========================[ Update admin  for admin]============================
+
+
+app.put('/:userId/Update_Admin/:id/',
+    Middleware.jwtValidation,
+    Middleware.authorization,
+    async (req, res) => {
+        try {
+            const id = req.params.id;
+            const updatedData = req.body;
+            const admin = await Admin.findOneAndUpdate({ _id: id }, updatedData, { new: true });
+
+            if (admin) {
+                res.status(200).send({
+                    status: true,
+                    message: "Seller Update Successfully",
+                    data: admin,
+                });
+            } else {
+                res.status(404).send({
+                    status: false,
+                    message: "Seller not found",
+                    data: null,
+                });
+            }
+        } catch (error) {
+            console.log(error.message);
+            res.status(500).send({
+                status: false,
+                message: error,
+                data: null,
+            });
+        }
+    });
 
 
 
