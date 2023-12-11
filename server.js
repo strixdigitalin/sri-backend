@@ -122,6 +122,12 @@ app.post('/AdminLogin', async function (req, res) {
                 message: "Your password is invalid",
             });
         }
+        if (!user.active){
+            return res.status(400).send({
+                status: false,
+                message: "User is Inactive ",
+            });
+        }
 
         var token = jwt.sign(
             {
