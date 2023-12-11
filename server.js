@@ -150,6 +150,30 @@ app.post('/AdminLogin', async function (req, res) {
 }
 );
 
+// =========================[ All Products List for admin]============================
+
+
+app.get('/:userId/Get_All_Admin',
+    Middleware.jwtValidation,
+    Middleware.authorization,
+    async (req, res) => {
+        try {
+            const All_admin = await Admin.find()
+            return res.status(200).send({
+                status: true,
+                message: "Get All Admin Successfull",
+                data: All_admin,
+            });
+
+        } catch (error) {
+            return res.status(500).send({
+                status: false,
+                message: error.message,
+            });
+        }
+    })
+
+
 
 
 // =========================[ All Products List for admin]============================
