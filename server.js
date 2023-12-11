@@ -189,13 +189,13 @@ app.put('/:userId/Update_Admin/:id/',
             if (admin) {
                 res.status(200).send({
                     status: true,
-                    message: "Seller Update Successfully",
+                    message: "Admin Update Successfully",
                     data: admin,
                 });
             } else {
                 res.status(404).send({
                     status: false,
-                    message: "Seller not found",
+                    message: "Admin not found",
                     data: null,
                 });
             }
