@@ -122,7 +122,7 @@ app.post('/AdminLogin', async function (req, res) {
                 message: "Your password is invalid",
             });
         }
-        if (!user.active){
+        if (!user.active) {
             return res.status(400).send({
                 status: false,
                 message: "This Admin is Inactive for now",
@@ -1796,7 +1796,7 @@ app.post("/:userId/CreateEnquire",
 
 app.get('/Get_All_Approved_product_for_User', async (req, res) => {
     try {
-        const { search } = req.query;
+        const { search, city } = req.query;
 
         // Check for an empty search term
         if (!search) {
@@ -1808,6 +1808,10 @@ app.get('/Get_All_Approved_product_for_User', async (req, res) => {
         }
 
         const filter = { IsApproved: true, Product_Name: { $regex: search, $options: 'i' } };
+        if (city) {
+            filter.City = city;
+        }
+
         const Products = await Product.find(filter);
         const productsWithUserData = [];
 
@@ -1847,8 +1851,6 @@ app.get('/Get_All_Approved_product_for_User', async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 });
-
-
 
 
 //=============================[Create Product_check api ]=========================
