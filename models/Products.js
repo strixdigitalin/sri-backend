@@ -12,6 +12,7 @@ const ProductSchema = new mongoose.Schema(
         Brand: { type: String, require: true },
         Model_name: { type: String, require: true },
         Country_of_origin: { type: String, require: true },
+        City: { type: mongoose.Schema.Types.ObjectId, ref: "City" },
         Product_description: { type: String, require: true },
         Product_Features: { type: String, require: true },
         Available_color: { type: [String], require: true },
